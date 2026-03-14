@@ -22,7 +22,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const parsed = credentialsSchema.safeParse(credentials);
         if (!parsed.success) return null;
 
-        const { username, password } = parsed.data;
+        const username = parsed.data.username.trim().toLowerCase();
+        const password = parsed.data.password.trim();
         if (username !== "admin" || password !== "admin") return null;
 
         const user = await prisma.user.upsert({
@@ -45,6 +46,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     error: "/auth/login",
   },
   trustHost: true,
+  secret: process.env.NEXTAUTH_SECRET || "unsafe-dev-secret-change-me",
   callbacks: {
     jwt: async ({ token, user }) => {
       if (user?.id) token.id = user.id;

@@ -23,8 +23,8 @@ export function LoginForm() {
 
     const result = await signIn("credentials", {
       redirect: false,
-      username,
-      password,
+      username: username.trim(),
+      password: password.trim(),
       callbackUrl,
     });
 
