@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  name      String?
+  memorials Memorial[]
+}
+
+model Memorial {
+  id           String    @id @default(cuid())
+  slug         String    @unique
+  firstName    String
+  lastName     String
+  dateOfBirth  DateTime
+  dateOfDeath  DateTime
+  obituary     String?   @db.Text
+  profileImage String?
+  coverImage   String?
+  theme        String    @default("CLASSIC")
+  isPublished  Boolean   @default(false)
+  streamKey    String?   @unique
+  isStreaming  Boolean   @default(false)
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  events       Event[]
+  media        Media[]
+  tributes     Tribute[]
+  checkins     CheckIn[]
+  rsvps        RSVP[]
+  program      ProgramItem[]
+  createdAt    DateTime  @default(now())
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  type        String
+  startDate   DateTime
+  location    String?
+  memorialId  String
+  memorial    Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  rsvps       RSVP[]
+}
+
+model Media {
+  id         String   @id @default(cuid())
+  type       String
+  url        String
+  caption    String?
+  memorialId String
+  memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+}
+
+model Tribute {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  authorName String
+  status     String   @default("APPROVED")
+  memorialId String
+  memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model CheckIn {
+  id         String   @id @default(cuid())
+  name       String
+  email      String?
+  memorialId String
+  memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+}
+
+model RSVP {
+  id         String   @id @default(cuid())
+  name       String
+  email      String
+  status     String
+  guestCount Int      @default(1)
+  memorialId String
+  memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+  eventId    String?
+  event      Event?   @relation(fields: [eventId], references: [id])
+}
+
+model ProgramItem {
+  id          String   @id @default(cuid())
+  title       String
+  type        String
+  time        String?
+  description String?  @db.Text
+  order       Int
+  speakerName String?
+  memorialId  String
+  memorial    Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
+}

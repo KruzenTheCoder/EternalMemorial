@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 33% 98%;
+    --foreground: 240 4% 16%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 4% 16%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 4% 16%;
+    --primary: 43 74% 49%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 240 4% 16%;
+    --muted: 40 20% 94%;
+    --muted-foreground: 30 10% 50%;
+    --accent: 43 74% 49%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 43 30% 85%;
+    --input: 43 30% 85%;
+    --ring: 43 74% 49%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 240 4% 10%;
+    --foreground: 40 20% 96%;
+    --card: 240 4% 12%;
+    --card-foreground: 40 20% 96%;
+    --popover: 240 4% 12%;
+    --popover-foreground: 40 20% 96%;
+    --primary: 43 74% 55%;
+    --primary-foreground: 240 4% 10%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 40 20% 96%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 43 74% 55%;
+    --accent-foreground: 240 4% 10%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 43 30% 25%;
+    --input: 43 30% 25%;
+    --ring: 43 74% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at 15% -10%, rgba(212, 175, 55, 0.08) 0%, transparent 35%),
+      radial-gradient(circle at 85% 8%, rgba(212, 175, 55, 0.05) 0%, transparent 30%);
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight text-foreground;
+  }
+}
+
+@layer utilities {
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-600 via-gold-500 to-gold-700;
+  }
+  .bg-gold-gradient {
+    @apply bg-gradient-to-r from-gold-100 via-gold-50 to-gold-200;
+  }
+  .luxury-card {
+    @apply bg-white/80 dark:bg-card/40 backdrop-blur-sm border border-gold-200/40 shadow-sm hover:shadow-md transition-all duration-300 rounded-xl;
+  }
+  .luxury-panel {
+    @apply rounded-2xl border border-gold-200/60 bg-white/90 dark:bg-card/80 backdrop-blur-md shadow-[0_8px_30px_rgba(0,0,0,0.04)];
+  }
+  .luxury-ring {
+    @apply relative overflow-hidden;
+  }
+  .luxury-ring::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.4), rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.4));
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  @keyframes dove-float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  @keyframes dove-wing {
+    0%, 100% {
+      transform: rotate(-6deg);
+    }
+    50% {
+      transform: rotate(10deg);
+    }
+  }
+
+  @keyframes dove-glow {
+    0%, 100% {
+      opacity: 0.55;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.9;
+      transform: scale(1.06);
+    }
+  }
+
+  @keyframes dove-dot {
+    0%, 80%, 100% {
+      opacity: 0.25;
+      transform: translateY(0px);
+    }
+    40% {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+  }
+
+  .dove-float {
+    animation: dove-float 1.6s ease-in-out infinite;
+    transform-origin: center;
+  }
+
+  .dove-wing {
+    transform-origin: 40px 18px;
+    animation: dove-wing 0.85s ease-in-out infinite;
+  }
+
+  .dove-glow {
+    animation: dove-glow 1.6s ease-in-out infinite;
+  }
+
+  .dove-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 9999px;
+    background: rgba(212, 175, 55, 0.9);
+    animation: dove-dot 1s ease-in-out infinite;
+  }
+
+  .dove-dot:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+
+  .dove-dot:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+}
