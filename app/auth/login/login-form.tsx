@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 
@@ -26,21 +25,25 @@ export function LoginForm() {
     setError("");
     setIsSubmitting(true);
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      username: username.trim(),
-      password: password.trim(),
-      callbackUrl,
-    });
+    try {
+      const response = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: username.trim(), password: password.trim() }),
+      });
 
-    if (!result || result.error) {
-      setError("Invalid credentials. Use admin / admin.");
+      if (!response.ok) {
+        setError("Invalid credentials. Use admin / admin.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      router.push(callbackUrl);
+      router.refresh();
+    } catch {
+      setError("Sign-in failed. Please try again.");
       setIsSubmitting(false);
-      return;
     }
-
-    router.push(callbackUrl);
-    router.refresh();
   }
 
   return (

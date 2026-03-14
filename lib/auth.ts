@@ -26,11 +26,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const password = parsed.data.password.trim();
         if (username !== "admin" || password !== "admin") return null;
 
-        const user = await prisma.user.upsert({
-          where: { email: adminEmail },
-          update: { name: adminName },
-          create: { email: adminEmail, name: adminName },
-        });
+        let user;
+        try {
+          user = await prisma.user.upsert({
+            where: { email: adminEmail },
+            update: { name: adminName },
+            create: { email: adminEmail, name: adminName },
+          });
+        } catch {
+          throw new Error("Configuration");
+        }
 
         return {
           id: user.id,
