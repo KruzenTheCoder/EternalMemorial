@@ -10,9 +10,10 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+  const hasError = searchParams.get("error") === "1";
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("admin");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(hasError ? "Sign-in failed. Please try again." : "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
@@ -72,4 +73,3 @@ export function LoginForm() {
     </form>
   );
 }
-
