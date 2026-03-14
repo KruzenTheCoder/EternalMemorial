@@ -126,9 +126,11 @@ export default async function DashboardPage() {
           <div className="text-sm bg-white p-3 rounded border border-red-100 text-left overflow-auto">
             <code className="text-red-500">Error: Database connection failed. Please check your Supabase credentials in .env</code>
           </div>
-          <Button onClick={() => window.location.reload()} className="mt-6 bg-red-600 hover:bg-red-700 text-white w-full">
-            Retry Connection
-          </Button>
+          <Link href="/dashboard" className="block mt-6">
+            <Button className="bg-red-600 hover:bg-red-700 text-white w-full">
+              Retry Connection
+            </Button>
+          </Link>
         </div>
       </div>
     );
