@@ -10,10 +10,15 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
-  const hasError = searchParams.get("error") === "1";
+  const errorCode = searchParams.get("error") || "";
   const [username, setUsername] = useState("admin");
   const [password, setPassword] = useState("admin");
-  const [error, setError] = useState(hasError ? "Sign-in failed. Please try again." : "");
+  const [error, setError] = useState(() => {
+    if (!errorCode) return "";
+    if (errorCode === "CredentialsSignin") return "Invalid credentials. Use admin / admin.";
+    if (errorCode === "Configuration") return "Server auth is misconfigured. Check NEXTAUTH_SECRET and NEXTAUTH_URL.";
+    return "Sign-in failed. Please try again.";
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
