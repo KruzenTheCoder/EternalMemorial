@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET() {
+  const hasDatabaseUrl = Boolean(process.env.DATABASE_URL || process.env.SUPABASE_DATABASE_URL);
+  const hasSupabaseUrl = Boolean(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL);
+  const hasAnonKey = Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+
   let prismaStatus: "ok" | "error" = "ok";
   let prismaError: string | null = null;
   try {
@@ -12,21 +15,16 @@ export async function GET() {
     prismaError = String(error).slice(0, 500);
   }
 
-  let supabaseStatus: "configured" | "not_configured" | "error" = "not_configured";
-  let supabaseError: string | null = null;
-  const supabase = getSupabaseAdmin();
-  if (supabase) {
-    supabaseStatus = "configured";
-    const { error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
-    if (error) {
-      supabaseStatus = "error";
-      supabaseError = error.message;
-    }
-  }
-
   return NextResponse.json({
     backend: "supabase+prisma",
     prisma: { status: prismaStatus, error: prismaError },
-    supabase: { status: supabaseStatus, error: supabaseError },
+    supabase: {
+      status: hasSupabaseUrl && hasAnonKey ? "configured" : "not_configured",
+    },
+    env: {
+      hasDatabaseUrl,
+      hasSupabaseUrl,
+      hasAnonKey,
+    },
   });
 }
