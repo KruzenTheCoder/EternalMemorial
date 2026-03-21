@@ -103,11 +103,22 @@ export default async function DashboardPage() {
                       <Settings className="w-4 h-4" /> Manage
                     </Button>
                   </Link>
-                  <Link href={`/${memorial.slug}`} className="w-full" target="_blank">
-                    <Button variant="ghost" className="w-full gap-2 hover:bg-gold-50 hover:text-gold-700">
-                      <ExternalLink className="w-4 h-4" /> Visit
+                  {memorial.isPublished ? (
+                    <Link href={`/${memorial.slug}`} className="w-full" target="_blank">
+                      <Button variant="ghost" className="w-full gap-2 hover:bg-gold-50 hover:text-gold-700">
+                        <ExternalLink className="w-4 h-4" /> Visit
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      className="w-full gap-2 text-muted-foreground"
+                      disabled
+                      title="Publish this memorial to open its public page."
+                    >
+                      <ExternalLink className="w-4 h-4" /> Publish to visit
                     </Button>
-                  </Link>
+                  )}
                 </div>
               </div>
             ))

@@ -114,7 +114,7 @@ export default function NewMemorialPage() {
               Enable Streaming
             </label>
             <label className="inline-flex items-center gap-2 text-sm">
-              <input type="checkbox" name="isPublished" className="h-4 w-4" />
+              <input type="checkbox" name="isPublished" className="h-4 w-4" defaultChecked />
               Publish Memorial
             </label>
           </div>
