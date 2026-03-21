@@ -8,10 +8,21 @@ datasource db {
 }
 
 model User {
-  id        String     @id @default(cuid())
-  email     String     @unique
-  name      String?
-  memorials Memorial[]
+  id           String               @id @default(cuid())
+  email        String               @unique
+  name         String?
+  passwordHash String?
+  memorials    Memorial[]
+  resetTokens  PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 model Memorial {
@@ -63,7 +74,7 @@ model Tribute {
   id         String   @id @default(cuid())
   content    String   @db.Text
   authorName String
-  status     String   @default("APPROVED")
+  status     String   @default("PENDING")
   memorialId String
   memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())
@@ -73,6 +84,7 @@ model CheckIn {
   id         String   @id @default(cuid())
   name       String
   email      String?
+  entryType  String   @default("GUESTBOOK")
   memorialId String
   memorial   Memorial @relation(fields: [memorialId], references: [id], onDelete: Cascade)
   createdAt  DateTime @default(now())

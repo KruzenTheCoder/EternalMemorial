@@ -70,18 +70,20 @@ export function ShareBar({ title }: { title: string }) {
         </Button>
       </div>
 
-      <div className="flex flex-wrap items-center justify-center gap-2">
-        {links.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            target="_blank"
-            rel="noreferrer"
-            className="px-3 py-1.5 rounded-full text-xs font-sans uppercase tracking-[0.25em] text-gold-100/85 border border-gold-200/30 bg-white/5 hover:bg-white/10 transition"
-          >
-            {item.label}
-          </a>
-        ))}
+      <div className="w-full max-w-[min(100%,24rem)] sm:max-w-none overflow-x-auto no-scrollbar">
+        <div className="flex flex-nowrap sm:flex-wrap items-center justify-center gap-2 pb-1 min-w-min mx-auto">
+          {links.map((item) => (
+            <a
+              key={item.label}
+              href={item.href}
+              target="_blank"
+              rel="noreferrer"
+              className="shrink-0 px-3 py-1.5 rounded-full text-[10px] sm:text-xs font-sans uppercase tracking-[0.2em] sm:tracking-[0.25em] text-gold-100/85 border border-gold-200/30 bg-white/5 hover:bg-white/10 transition"
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ function yearOrBlank(date?: Date) {
 
 export function MemorialHero({ memorial }: { memorial: Partial<Memorial> }) {
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[82dvh] sm:min-h-[88dvh] md:min-h-[92vh] flex items-center justify-center overflow-hidden">
       {memorial.coverImage ? (
         <div className="absolute inset-0 z-0">
           <Image
@@ -33,7 +33,7 @@ export function MemorialHero({ memorial }: { memorial: Partial<Memorial> }) {
         <div className="absolute inset-0 bg-neutral-900" />
       )}
 
-      <div className="relative z-10 container mx-auto text-center text-white px-4">
+      <div className="relative z-10 container mx-auto text-center text-white px-4 sm:px-6 max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
@@ -54,7 +54,7 @@ export function MemorialHero({ memorial }: { memorial: Partial<Memorial> }) {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.8 }}
-              className="relative w-52 h-52 md:w-56 md:h-56 mb-8"
+              className="relative w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 mb-6 sm:mb-8"
             >
               <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-gold-300 to-gold-600 p-1 shadow-[0_0_40px_rgba(212,175,55,0.5)] animate-glow-pulse">
                 <div className="w-full h-full rounded-full overflow-hidden border-4 border-black/20 relative">
@@ -69,16 +69,17 @@ export function MemorialHero({ memorial }: { memorial: Partial<Memorial> }) {
             </motion.div>
           )}
 
-          <h1 className="font-display text-6xl md:text-8xl font-bold mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-gold-50 via-gold-200 to-gold-500 drop-shadow-[0_10px_40px_rgba(0,0,0,0.65)]">
-            {memorial.firstName} {memorial.lastName}
+          <h1 className="font-display text-[clamp(2.25rem,9vw,5.5rem)] md:text-8xl font-bold mb-3 sm:mb-4 tracking-tight text-transparent bg-clip-text bg-gradient-to-b from-gold-50 via-gold-200 to-gold-500 drop-shadow-[0_10px_40px_rgba(0,0,0,0.65)] px-1 leading-[1.05]">
+            <span className="block sm:inline">{memorial.firstName}</span>{" "}
+            <span className="block sm:inline">{memorial.lastName}</span>
           </h1>
 
-          <div className="flex items-center gap-4 text-gold-100/85 font-serif text-xl md:text-2xl tracking-[0.2em] uppercase my-4">
-            <span className="h-[1px] w-12 md:w-16 bg-gradient-to-r from-transparent via-gold-300/80 to-transparent"></span>
-            <span>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-gold-100/85 font-serif text-base sm:text-xl md:text-2xl tracking-[0.12em] sm:tracking-[0.2em] uppercase my-3 sm:my-4 px-2">
+            <span className="hidden sm:block h-[1px] w-12 md:w-16 bg-gradient-to-r from-transparent via-gold-300/80 to-transparent" />
+            <span className="whitespace-nowrap">
               {yearOrBlank(memorial.dateOfBirth)} — {yearOrBlank(memorial.dateOfDeath)}
             </span>
-            <span className="h-[1px] w-12 md:w-16 bg-gradient-to-r from-transparent via-gold-300/80 to-transparent"></span>
+            <span className="hidden sm:block h-[1px] w-12 md:w-16 bg-gradient-to-r from-transparent via-gold-300/80 to-transparent" />
           </div>
 
           <motion.div
@@ -87,7 +88,7 @@ export function MemorialHero({ memorial }: { memorial: Partial<Memorial> }) {
             transition={{ delay: 1.05 }}
             className="mt-8 max-w-2xl"
           >
-            <p className="text-lg text-gold-50/80 italic font-serif leading-relaxed">
+            <p className="text-base sm:text-lg text-gold-50/80 italic font-serif leading-relaxed px-2">
               &quot;Those we love don&apos;t go away, they walk beside us every day.&quot;
             </p>
           </motion.div>

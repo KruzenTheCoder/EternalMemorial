@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
+import { DashboardChrome } from "@/components/dashboard/dashboard-chrome";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  return children;
+export default function DashboardLayout({ children }: { children: ReactNode }) {
+  return <DashboardChrome>{children}</DashboardChrome>;
 }

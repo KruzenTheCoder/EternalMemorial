@@ -40,8 +40,14 @@ export default function NewMemorialPage() {
       });
 
       if (!response.ok) {
-        const body = await response.json();
-        throw new Error(body.error ? "Could not create memorial" : "Could not create memorial");
+        const body = await response.json().catch(() => null);
+        const message =
+          body?.detail
+            ? String(body.detail)
+            : body?.error
+              ? String(body.error)
+              : `Request failed (${response.status})`;
+        throw new Error(message);
       }
 
       const memorial = await response.json();
@@ -55,9 +61,15 @@ export default function NewMemorialPage() {
   }
 
   return (
-    <div className="container mx-auto py-10 max-w-3xl">
-      <h1 className="text-3xl font-bold mb-8">Create New Memorial</h1>
-      <form className="space-y-6" onSubmit={onSubmit}>
+    <div className="container mx-auto py-10 max-w-3xl px-4">
+      <div className="mb-8">
+        <p className="text-xs uppercase tracking-[0.25em] text-gold-700/80">Dashboard</p>
+        <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mt-2">Create a memorial</h1>
+        <p className="text-muted-foreground mt-2 max-w-xl">
+          A calm, lasting place for obituaries, services, photos, and live gatherings.
+        </p>
+      </div>
+      <form className="space-y-8 luxury-panel p-6 md:p-10" onSubmit={onSubmit}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium mb-2">First Name</label>
@@ -117,8 +129,8 @@ export default function NewMemorialPage() {
           />
         </div>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Creating..." : "Create Memorial"}
+        <Button type="submit" disabled={isSubmitting} className="bg-gold-600 hover:bg-gold-700 text-white min-w-[160px]">
+          {isSubmitting ? "Creating..." : "Create memorial"}
         </Button>
       </form>
     </div>

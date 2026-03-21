@@ -21,3 +21,25 @@ export const eventSchema = z.object({
   startDate: z.string().or(z.date()),
   location: z.string().optional(),
 });
+
+export const tributeCreateSchema = z.object({
+  authorName: z.string().min(1, "Name is required").max(120),
+  content: z.string().min(1, "Message is required").max(4000),
+});
+
+export const tributeModerationSchema = z.object({
+  status: z.enum(["APPROVED", "REJECTED", "PENDING"]),
+});
+
+export const rsvpCreateSchema = z.object({
+  name: z.string().min(1).max(120),
+  email: z.string().email().max(200),
+  guestCount: z.coerce.number().int().min(1).max(20).optional(),
+  status: z.enum(["ATTENDING", "MAYBE", "DECLINED"]).optional(),
+});
+
+export const mediaCreateSchema = z.object({
+  url: z.string().url().max(2000),
+  type: z.string().min(1).max(40).optional(),
+  caption: z.string().max(500).optional().or(z.literal("")),
+});

@@ -91,7 +91,7 @@ export default async function DashboardPage() {
                       <span className="font-semibold text-foreground">{memorial._count.events}</span>
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-xs uppercase tracking-wider opacity-70">Tributes</span>
+                      <span className="text-xs uppercase tracking-wider opacity-70">Guest activity</span>
                       <span className="font-semibold text-foreground">{memorial._count.checkins}</span>
                     </div>
                   </div>
@@ -115,22 +115,46 @@ export default async function DashboardPage() {
         </div>
       </div>
     );
-  } catch {
+  } catch (e) {
+    const detail = e instanceof Error ? e.message : String(e);
+    const isDev = process.env.NODE_ENV === "development";
     return (
       <div className="container mx-auto py-12 px-6 text-center">
-        <div className="max-w-md mx-auto luxury-card p-8 border-red-200 bg-red-50/50">
-          <h1 className="text-2xl font-bold text-red-800 mb-2">Connection Error</h1>
-          <p className="text-red-600 mb-4">
-            Unable to connect to the memorial database.
+        <div className="max-w-lg mx-auto luxury-card p-8 border-red-200 bg-red-50/50 text-left">
+          <h1 className="text-2xl font-bold text-red-800 mb-2 text-center">Database connection failed</h1>
+          <p className="text-red-700/90 mb-4 text-center text-sm">
+            Prisma could not reach PostgreSQL. This is almost always the connection string in{" "}
+            <code className="text-xs bg-white/80 px-1 rounded">.env</code>.
           </p>
-          <div className="text-sm bg-white p-3 rounded border border-red-100 text-left overflow-auto">
-            <code className="text-red-500">Error: Database connection failed. Please check your Supabase credentials in .env</code>
+          {isDev ? (
+            <div className="text-xs bg-white p-3 rounded border border-red-100 font-mono text-red-800 break-words mb-4">
+              {detail}
+            </div>
+          ) : null}
+          <ul className="text-sm text-foreground/90 space-y-2 list-disc pl-5 mb-6">
+            <li>
+              Use <strong>DATABASE_URL</strong> as your main URL (it must match what you use in Supabase). Remove or fix a stale{" "}
+              <code className="text-xs">SUPABASE_DATABASE_URL</code> if it overrides a good direct URL.
+            </li>
+            <li>
+              <strong>Pooler</strong> (<code className="text-xs">*.pooler.supabase.com</code>, port <strong>6543</strong>): username must be{" "}
+              <code className="text-xs">postgres.&lt;project-ref&gt;</code>, not <code className="text-xs">postgres</code> — otherwise you get &quot;Tenant or user not found&quot;.
+            </li>
+            <li>
+              <strong>Direct</strong> (<code className="text-xs">db.&lt;ref&gt;.supabase.co</code>, port <strong>5432</strong>): username is{" "}
+              <code className="text-xs">postgres</code>. URL-encode special characters in the password.
+            </li>
+          </ul>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link href="/dashboard/integrations/supabase" className="flex-1">
+              <Button variant="outline" className="w-full border-red-200">
+                Test connection
+              </Button>
+            </Link>
+            <Link href="/dashboard" className="flex-1">
+              <Button className="w-full bg-red-600 hover:bg-red-700 text-white">Retry</Button>
+            </Link>
           </div>
-          <Link href="/dashboard" className="block mt-6">
-            <Button className="bg-red-600 hover:bg-red-700 text-white w-full">
-              Retry Connection
-            </Button>
-          </Link>
         </div>
       </div>
     );

@@ -26,6 +26,29 @@ type ProgramItem = {
   speakerName: string | null;
 };
 
+type MediaItem = {
+  id: string;
+  type: string;
+  url: string;
+  caption: string | null;
+};
+
+type TributeItem = {
+  id: string;
+  authorName: string;
+  content: string;
+  status: string;
+  createdAt: string;
+};
+
+type CheckInItem = {
+  id: string;
+  name: string;
+  email: string | null;
+  entryType: string;
+  createdAt: string;
+};
+
 type MemorialResponse = {
   id: string;
   slug: string;
@@ -41,6 +64,9 @@ type MemorialResponse = {
   isPublished: boolean;
   events: EventItem[];
   program: ProgramItem[];
+  media: MediaItem[];
+  tributes: TributeItem[];
+  checkins: CheckInItem[];
 };
 
 function toInputDate(date: string) {
@@ -54,8 +80,11 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
   const [isSaving, setIsSaving] = useState(false);
   const [isEventSaving, setIsEventSaving] = useState(false);
   const [isProgramSaving, setIsProgramSaving] = useState(false);
+  const [isMediaSaving, setIsMediaSaving] = useState(false);
   const [profileImage, setProfileImage] = useState("");
   const [coverImage, setCoverImage] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [mediaCaption, setMediaCaption] = useState("");
 
   const loadMemorial = useCallback(async () => {
     const response = await fetch(`/api/memorials/${params.id}`, { cache: "no-store" });
@@ -180,6 +209,61 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
     }
   }
 
+  async function onAddMedia(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!mediaUrl.trim()) return;
+    setError("");
+    setIsMediaSaving(true);
+    try {
+      const response = await fetch(`/api/memorials/${params.id}/media`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: mediaUrl.trim(),
+          type: "PHOTO",
+          caption: mediaCaption.trim() || undefined,
+        }),
+      });
+      if (!response.ok) throw new Error("Could not add photo");
+      setMediaUrl("");
+      setMediaCaption("");
+      await loadMemorial();
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not add photo");
+    } finally {
+      setIsMediaSaving(false);
+    }
+  }
+
+  async function onDeleteMedia(mediaId: string) {
+    setError("");
+    try {
+      const response = await fetch(`/api/memorials/${params.id}/media/${mediaId}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Could not remove photo");
+      await loadMemorial();
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not remove photo");
+    }
+  }
+
+  async function onTributeStatus(tributeId: string, status: "APPROVED" | "REJECTED") {
+    setError("");
+    try {
+      const response = await fetch(`/api/memorials/${params.id}/tributes/${tributeId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      if (!response.ok) throw new Error("Could not update message");
+      await loadMemorial();
+      router.refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not update message");
+    }
+  }
+
   async function onDeleteProgramItem(itemId: string) {
     setError("");
     try {
@@ -205,22 +289,20 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
   }
 
   return (
-    <div className="container mx-auto py-10 max-w-4xl space-y-10">
-      <div className="flex justify-between items-start gap-6">
+    <div className="container mx-auto py-10 max-w-4xl space-y-10 px-4">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6">
         <div>
-          <h1 className="text-3xl font-bold">
-            Edit Memorial: {memorial.firstName} {memorial.lastName}
+          <h1 className="text-3xl font-display font-bold text-foreground">
+            Edit memorial · {memorial.firstName} {memorial.lastName}
           </h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            Public URL: /{memorial.slug}
-          </p>
+          <p className="text-sm text-muted-foreground mt-2 font-mono">/{memorial.slug}</p>
         </div>
-        <Link href={`/${memorial.slug}`}>
-          <Button>Open Public Portal</Button>
+        <Link href={`/${memorial.slug}`} target="_blank">
+          <Button className="bg-gold-600 hover:bg-gold-700 text-white w-full sm:w-auto">Open public page</Button>
         </Link>
       </div>
 
-      <form className="space-y-6" onSubmit={onSave}>
+      <form className="space-y-6 luxury-panel p-6 md:p-8" onSubmit={onSave}>
         <div className="grid md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-medium mb-2">First Name</label>
@@ -364,6 +446,117 @@ export default function EditMemorialPage({ params }: { params: { id: string } })
                 <Button variant="ghost" size="sm" onClick={() => onDeleteProgramItem(item.id)} className="text-red-500 hover:text-red-700 hover:bg-red-50">
                   Remove
                 </Button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-8 border-t">
+        <h2 className="text-2xl font-display font-semibold">Memory gallery</h2>
+        <p className="text-sm text-muted-foreground">
+          Add photos by URL (for example from your Supabase bucket) or use uploads on the fields above for profile and cover.
+        </p>
+        <form className="grid md:grid-cols-12 gap-4 items-end bg-muted/20 p-4 rounded-lg border" onSubmit={onAddMedia}>
+          <div className="md:col-span-7">
+            <label className="block text-xs font-medium mb-1">Image URL</label>
+            <Input
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="https://…"
+              required
+            />
+          </div>
+          <div className="md:col-span-3">
+            <label className="block text-xs font-medium mb-1">Caption (optional)</label>
+            <Input value={mediaCaption} onChange={(e) => setMediaCaption(e.target.value)} placeholder="Summer 1998" />
+          </div>
+          <div className="md:col-span-2">
+            <Button type="submit" disabled={isMediaSaving} className="w-full bg-gold-600 hover:bg-gold-700">
+              {isMediaSaving ? "Adding…" : "Add"}
+            </Button>
+          </div>
+        </form>
+        <div className="grid sm:grid-cols-2 gap-4">
+          {(memorial.media ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground col-span-full">No gallery images yet.</p>
+          ) : (
+            (memorial.media ?? []).map((m) => (
+              <div key={m.id} className="flex gap-3 p-3 border rounded-lg bg-white/60 items-center">
+                <div className="w-20 h-20 rounded-md overflow-hidden bg-muted shrink-0 relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m.url} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground truncate">{m.caption || "Photo"}</p>
+                  <p className="text-[10px] font-mono truncate opacity-70">{m.url}</p>
+                </div>
+                <Button type="button" variant="ghost" size="sm" className="text-red-600 shrink-0" onClick={() => onDeleteMedia(m.id)}>
+                  Remove
+                </Button>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-8 border-t">
+        <h2 className="text-2xl font-display font-semibold">Messages & moderation</h2>
+        <p className="text-sm text-muted-foreground">Approve condolence messages before they appear on the public page.</p>
+        <div className="space-y-3">
+          {(memorial.tributes ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">No messages yet.</p>
+          ) : (
+            (memorial.tributes ?? []).map((t) => (
+              <div key={t.id} className="border rounded-lg p-4 bg-white/70 space-y-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="font-semibold">{t.authorName}</p>
+                  <span
+                    className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${
+                      t.status === "APPROVED"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : t.status === "REJECTED"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-amber-100 text-amber-900"
+                    }`}
+                  >
+                    {t.status}
+                  </span>
+                </div>
+                <p className="text-sm whitespace-pre-wrap text-foreground/90">{t.content}</p>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button type="button" size="sm" variant="outline" onClick={() => onTributeStatus(t.id, "APPROVED")}>
+                    Approve
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" onClick={() => onTributeStatus(t.id, "REJECTED")}>
+                    Reject
+                  </Button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4 pt-8 border-t">
+        <h2 className="text-2xl font-display font-semibold">Guest activity</h2>
+        <p className="text-sm text-muted-foreground">Recent guest book entries and virtual candles.</p>
+        <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+          {(memorial.checkins ?? []).length === 0 ? (
+            <p className="text-sm text-muted-foreground">No activity yet.</p>
+          ) : (
+            (memorial.checkins ?? []).map((c) => (
+              <div key={c.id} className="flex flex-wrap items-baseline justify-between gap-2 text-sm border-b border-border/40 pb-2">
+                <div>
+                  <span className="font-medium">{c.name}</span>
+                  {c.email ? <span className="text-muted-foreground"> · {c.email}</span> : null}
+                </div>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <span className="uppercase tracking-wide">
+                    {c.entryType === "CANDLE" ? "Candle" : "Guest book"}
+                  </span>
+                  <span>{new Date(c.createdAt).toLocaleString()}</span>
+                </div>
               </div>
             ))
           )}

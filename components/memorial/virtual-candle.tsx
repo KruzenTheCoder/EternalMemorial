@@ -3,7 +3,15 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 
-export function VirtualCandle({ memorialId }: { memorialId: string }) {
+export function VirtualCandle({
+  memorialId,
+  candleCount,
+  guestCount,
+}: {
+  memorialId: string;
+  candleCount: number;
+  guestCount: number;
+}) {
   const [isLit, setIsLit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -94,6 +102,10 @@ export function VirtualCandle({ memorialId }: { memorialId: string }) {
       >
         {isLit ? "Light has been given" : isSubmitting ? "Offering light..." : "Touch to light a candle"}
       </motion.p>
+      <p className="mt-4 text-xs text-muted-foreground font-sans max-w-xs leading-relaxed">
+        <span className="font-semibold text-foreground">{candleCount}</span> candles ·{" "}
+        <span className="font-semibold text-foreground">{guestCount}</span> guest book signatures
+      </p>
       {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
     </div>
   );

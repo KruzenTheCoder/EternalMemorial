@@ -1,27 +1,31 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1rem",
+        sm: "1.25rem",
+        lg: "2rem",
+      },
       screens: {
         "2xl": "1400px",
       },
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", "ui-sans-serif", "system-ui"],
-        display: ["var(--font-display)", "serif"],
-        serif: ["var(--font-serif)", "serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -75,6 +79,14 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "1.75rem",
+      },
+      boxShadow: {
+        material: "0 1px 2px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.06)",
+        "material-lg": "0 2px 4px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.08)",
+        ios: "0 4px 20px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)",
       },
       keyframes: {
         "accordion-down": {
@@ -101,14 +113,19 @@ const config = {
           "0%, 100%": { opacity: "0.45" },
           "50%": { opacity: "0.9" },
         },
+        "btn-shine": {
+          "0%": { transform: "translateX(-120%) skewX(-12deg)" },
+          "100%": { transform: "translateX(220%) skewX(-12deg)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-in-up": "fade-in-up 0.8s ease-out forwards",
-        "shimmer": "shimmer 8s linear infinite",
+        shimmer: "shimmer 8s linear infinite",
         "soft-float": "soft-float 5s ease-in-out infinite",
         "glow-pulse": "glow-pulse 3s ease-in-out infinite",
+        "btn-shine": "btn-shine 2.8s ease-in-out infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -118,7 +135,39 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
-} satisfies Config
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography"), require("daisyui")],
+  daisyui: {
+    themes: [
+      {
+        eternal: {
+          primary: "#b8860b",
+          "primary-content": "#ffffff",
+          secondary: "#3f3a32",
+          "secondary-content": "#faf7f0",
+          accent: "#d4af37",
+          "accent-content": "#1a1510",
+          neutral: "#292524",
+          "neutral-content": "#fafaf9",
+          "base-100": "#fdfcfa",
+          "base-200": "#f3eee6",
+          "base-300": "#e3d8c8",
+          "base-content": "#1c1917",
+          info: "#0284c7",
+          success: "#16a34a",
+          warning: "#ca8a04",
+          error: "#dc2626",
+          "--rounded-box": "1.25rem",
+          "--rounded-btn": "0.875rem",
+          "--rounded-badge": "9999px",
+          "--animation-btn": "0.2s",
+          "--animation-input": "0.15s",
+          "--btn-focus-scale": "0.98",
+        },
+      },
+    ],
+    darkTheme: false,
+    logs: false,
+  },
+} satisfies Config;
 
-export default config
+export default config;

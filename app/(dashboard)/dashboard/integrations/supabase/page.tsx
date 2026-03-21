@@ -59,6 +59,12 @@ export default async function SupabaseIntegrationPage() {
 
       <div className="rounded-lg border p-6 bg-card space-y-4">
         <h2 className="text-xl font-semibold">Environment Checklist</h2>
+        <p className="text-sm text-muted-foreground">
+          Runtime Prisma uses <code className="text-xs">DATABASE_URL</code> first, then <code className="text-xs">SUPABASE_DATABASE_URL</code>.
+          If both are set, ensure the pooler string uses user <code className="text-xs">postgres.&lt;project-ref&gt;</code> on port{" "}
+          <strong>6543</strong>, or use the direct host <code className="text-xs">db.&lt;ref&gt;.supabase.co:5432</code> with user{" "}
+          <code className="text-xs">postgres</code>.
+        </p>
         <div className="grid md:grid-cols-2 gap-3 text-sm">
           <p>DATABASE_URL or SUPABASE_DATABASE_URL: {hasDatabaseUrl ? "✓" : "✗"}</p>
           <p>NEXT_PUBLIC_SUPABASE_URL: {hasPublicUrl ? "✓" : "✗"}</p>

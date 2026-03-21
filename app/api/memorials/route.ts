@@ -65,7 +65,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json(memorial, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Database unavailable", detail: String(error) }, { status: 503 });
+    const detail = String(error).slice(0, 300);
+    return NextResponse.json({ error: "Database unavailable", detail }, { status: 503 });
   }
 }
 

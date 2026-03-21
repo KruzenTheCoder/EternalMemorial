@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 type CheckInFormData = {
   name: string;
@@ -10,6 +11,7 @@ type CheckInFormData = {
 };
 
 export function CheckinForm({ memorialId }: { memorialId: string }) {
+  const router = useRouter();
   const { register, handleSubmit, reset } = useForm<CheckInFormData>();
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +31,7 @@ export function CheckinForm({ memorialId }: { memorialId: string }) {
       if (!response.ok) throw new Error("Could not check in");
       setSuccess(true);
       reset();
+      router.refresh();
     } catch {
       setError("Could not submit check-in. Please try again.");
     } finally {

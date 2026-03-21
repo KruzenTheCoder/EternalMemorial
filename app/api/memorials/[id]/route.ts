@@ -23,12 +23,17 @@ export async function GET(_: Request, { params }: { params: { id: string } }) {
         media: true,
         checkins: {
           orderBy: { createdAt: "desc" },
-          take: 20,
+          take: 50,
+        },
+        tributes: {
+          orderBy: { createdAt: "desc" },
         },
         _count: {
           select: {
             checkins: true,
             events: true,
+            media: true,
+            tributes: true,
           },
         },
       },

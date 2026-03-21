@@ -1,19 +1,29 @@
 import { Suspense } from "react";
+import { AuthShell } from "@/components/auth/auth-shell";
+import { AuthTagline } from "@/components/auth/auth-tagline";
+import { ImmersiveBackdrop } from "@/components/immersive/immersive-backdrop";
 import { LoginForm } from "./login-form";
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gold-50/20 px-4">
-      <div className="max-w-md w-full luxury-card p-8 md:p-10 border border-gold-200 shadow-xl bg-white/90">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-display font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground font-serif italic">Sign in to manage your memorials</p>
-        </div>
-
-        <Suspense fallback={<div className="h-32" />}>
+    <div className="relative min-h-screen">
+      <div className="fixed inset-0 z-0">
+        <ImmersiveBackdrop variant="auth" className="h-full w-full" />
+      </div>
+      <AuthShell
+        immersive
+        eyebrow="Welcome back"
+        title="Sign in"
+        description="Manage memorials with quiet elegance."
+      >
+        <AuthTagline
+          phrases={["Your stories, preserved.", "One gentle place for every memory.", "We’re glad you’re here."]}
+          className="mb-8"
+        />
+        <Suspense fallback={<div className="h-40 animate-pulse rounded-xl bg-gold-50/50" />}>
           <LoginForm />
         </Suspense>
-      </div>
+      </AuthShell>
     </div>
   );
 }

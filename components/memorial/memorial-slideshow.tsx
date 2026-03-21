@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Media } from "@prisma/client";
 
@@ -18,40 +17,47 @@ export function MemorialSlideshow({ media }: { media: Partial<Media>[] }) {
 
   if (!media || media.length === 0) return null;
 
+  const currentUrl = media[current].url;
+
   return (
     <div className="space-y-4">
       <div className="relative aspect-video bg-neutral-950 rounded-2xl overflow-hidden group luxury-ring">
-        {media[current].url && (
-          <Image
-            src={media[current].url}
+        {currentUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- user-supplied gallery URLs from any host
+          <img
+            src={currentUrl}
             alt={media[current].caption || "Memorial image"}
-            fill
-            className="object-contain"
+            className="absolute inset-0 w-full h-full object-contain"
           />
-        )}
+        ) : null}
         <button
+          type="button"
+          aria-label="Previous image"
           onClick={() => setCurrent((c) => (c - 1 + media.length) % media.length)}
           className="absolute left-4 top-1/2 -translate-y-1/2 p-2.5 bg-black/45 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
         >
           <ChevronLeft className="h-7 w-7" />
         </button>
         <button
+          type="button"
+          aria-label="Next image"
           onClick={() => setCurrent((c) => (c + 1) % media.length)}
           className="absolute right-4 top-1/2 -translate-y-1/2 p-2.5 bg-black/45 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-black/70"
         >
           <ChevronRight className="h-7 w-7" />
         </button>
-        {media[current].caption && (
-          <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-center">
+        {media[current].caption ? (
+          <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/40 to-transparent text-white text-center pointer-events-none">
             <p className="font-serif text-base md:text-lg">{media[current].caption}</p>
           </div>
-        )}
+        ) : null}
       </div>
 
       <div className="flex flex-wrap justify-center gap-2 md:gap-3">
         {media.map((item, index) => (
           <button
             key={item.id ?? `${item.url}-${index}`}
+            type="button"
             onClick={() => {
               setCurrent(index);
               setAutoplay(false);
@@ -62,14 +68,10 @@ export function MemorialSlideshow({ media }: { media: Partial<Media>[] }) {
                 : "border-gold-200/50 hover:border-gold-400/70"
             }`}
           >
-            {item.url && (
-              <Image
-                src={item.url}
-                alt={item.caption || `Memory ${index + 1}`}
-                fill
-                className="object-cover"
-              />
-            )}
+            {item.url ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={item.url} alt={item.caption || `Memory ${index + 1}`} className="absolute inset-0 w-full h-full object-cover" />
+            ) : null}
           </button>
         ))}
       </div>

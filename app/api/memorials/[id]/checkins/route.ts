@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
-    const memorial = await prisma.memorial.findUnique({
-      where: { id: params.id },
+    const memorial = await prisma.memorial.findFirst({
+      where: { id: params.id, isPublished: true },
       select: { id: true },
     });
     if (!memorial) return NextResponse.json({ error: "Memorial not found" }, { status: 404 });
@@ -18,6 +18,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       data: {
         name: data.name,
         email: typeof data.email === "string" ? data.email : null,
+        entryType: "GUESTBOOK",
         memorialId: params.id,
       },
     });

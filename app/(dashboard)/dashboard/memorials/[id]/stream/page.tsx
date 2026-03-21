@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 
 // Dynamically import StreamBroadcaster with SSR disabled
 const StreamBroadcaster = dynamic(
-  () => import("@/components/livestream/stream-broadcaster"),
+  () => import("@/components/livestream/stream-broadcaster").then((m) => m.default),
   { ssr: false }
 );
 

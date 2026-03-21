@@ -1,42 +1,60 @@
-import type { Metadata } from "next";
-import { Inter, Playfair_Display, Cormorant_Garamond } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans, Fraunces, Lora } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { BRAND } from "@/lib/brand";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
-const cormorant = Cormorant_Garamond({ 
-  subsets: ["latin"], 
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-serif" 
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Eternal Memory - Honor and Remember Loved Ones",
-  description: "A luxury memorial platform to create lasting tributes, share memories, and host virtual services for your loved ones.",
+  title: `${BRAND.name} - ${BRAND.tagline}`,
+  description: BRAND.description,
   openGraph: {
-    title: "Eternal Memory - Honor and Remember Loved Ones",
-    description: "Create lasting tributes, share memories, and host virtual services.",
-    url: "https://eternalmemory.com",
-    siteName: "Eternal Memory",
+    title: `${BRAND.name} - ${BRAND.tagline}`,
+    description: BRAND.description,
+    url: BRAND.url,
+    siteName: BRAND.name,
     images: [
       {
-        url: "https://eternalmemory.com/og-image.jpg",
+        url: `${BRAND.url}/icon.svg`,
         width: 1200,
         height: 630,
-        alt: "Eternal Memory Platform",
+        alt: `${BRAND.name} brand mark`,
       },
     ],
     locale: "en_US",
     type: "website",
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: [{ url: "/icon.svg", type: "image/svg+xml" }],
+    shortcut: "/favicon.ico",
+    apple: "/icon.svg",
   },
   manifest: "/manifest.json",
-  themeColor: "#D4AF37",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#b8860b",
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -45,13 +63,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
-      <body className={cn(
-        "min-h-screen bg-background font-sans antialiased",
-        inter.variable,
-        playfair.variable,
-        cormorant.variable
-      )}>
+    <html lang="en" data-theme="eternal" className="scroll-smooth">
+      <body
+        className={cn(
+          "min-h-screen bg-base-200/40 text-base-content font-sans antialiased selection:bg-primary/20 selection:text-base-content",
+          jakarta.variable,
+          fraunces.variable,
+          lora.variable
+        )}
+      >
         {children}
       </body>
     </html>
