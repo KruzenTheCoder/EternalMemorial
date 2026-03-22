@@ -11,10 +11,14 @@ import { MemorialLifeArc } from "@/components/memorial/memorial-life-arc";
 import { MemorialQuickNav } from "@/components/memorial/memorial-quick-nav";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import nextDynamic from "next/dynamic";
 import { BRAND } from "@/lib/brand";
+import { normalizeMemorialSlug } from "@/lib/memorial-slug";
 
-const StreamPlayer = dynamic(
+/** Always resolve from the database; never cache a “missing” memorial across deploys. */
+export const dynamic = "force-dynamic";
+
+const StreamPlayer = nextDynamic(
   () =>
     import("@/components/livestream/stream-player").then((m) => m.StreamPlayer),
   {
@@ -44,8 +48,11 @@ function SectionDivider() {
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const slug = normalizeMemorialSlug(params.slug);
+  if (!slug) return { title: `Memorial | ${BRAND.name}` };
+
   const memorial = await prisma.memorial.findFirst({
-    where: { slug: params.slug, isPublished: true },
+    where: { isPublished: true, slug: { equals: slug, mode: "insensitive" } },
     select: {
       firstName: true,
       lastName: true,
@@ -87,8 +94,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function MemorialPage({ params }: { params: { slug: string } }) {
+  const slug = normalizeMemorialSlug(params.slug);
+  if (!slug) notFound();
+
   const memorialQuery = prisma.memorial.findFirst({
-    where: { slug: params.slug, isPublished: true },
+    where: { isPublished: true, slug: { equals: slug, mode: "insensitive" } },
     include: {
       media: true,
       events: true,

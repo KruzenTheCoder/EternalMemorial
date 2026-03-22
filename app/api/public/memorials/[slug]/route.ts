@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { normalizeMemorialSlug } from "@/lib/memorial-slug";
 
 export async function GET(_: Request, { params }: { params: { slug: string } }) {
-  const slug = params.slug;
+  const slug = normalizeMemorialSlug(params.slug);
+  if (!slug) {
+    return NextResponse.json({ exists: false, slug: params.slug, error: "Invalid slug" }, { status: 400 });
+  }
   try {
-    const memorial = await prisma.memorial.findUnique({
-      where: { slug },
+    const memorial = await prisma.memorial.findFirst({
+      where: { slug: { equals: slug, mode: "insensitive" } },
       select: {
         id: true,
         slug: true,
