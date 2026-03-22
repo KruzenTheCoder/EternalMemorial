@@ -8,6 +8,8 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { BRAND } from "@/lib/brand";
 
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+
 export function DashboardChrome({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -67,6 +69,7 @@ export function DashboardChrome({ children }: { children: ReactNode }) {
                 <span className="hidden lg:inline">Site</span>
               </Button>
             </Link>
+            <ThemeToggle />
             <Button variant="outline" size="sm" className="border-gold-200" type="button" onClick={() => void logout()}>
               <LogOut className="h-4 w-4 sm:mr-1" />
               <span className="hidden lg:inline">Sign out</span>
